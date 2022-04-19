@@ -1,7 +1,7 @@
-package com.example.demo.controllers;
+package application.controllers;
 
-import com.example.demo.models.User;
-import com.example.demo.service.UserService;
+import application.models.User;
+import application.dao.UserDaoImpl;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,52 +10,51 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 public class UserController {
 
-    private final UserService userService;
+    private final UserDaoImpl userDao;
 
-    public UserController(UserService userService) {
-        this.userService = userService;
+    public UserController(UserDaoImpl userDao) {
+        this.userDao = userDao;
     }
 
 
     @GetMapping("/users")
-    public String findAll(Model model){
-        List<User> users = userService.findAll();
+    public String findAll(Model model) {
+        List<User> users = userDao.findAll();
         model.addAttribute("users", users);
         return "users";
     }
 
     @GetMapping("/create")
-    public String createUserForm(User user){
+    public String createUserForm(User user) {
         return "create";
     }
 
     @PostMapping("/create")
-    public String createUser(@ModelAttribute("user") User user){
-        userService.saveUser(user);
+    public String createUser(@ModelAttribute("user") User user) {
+        userDao.saveUser(user);
         return "redirect:/users";
     }
 
     @GetMapping("delete/{id}")
-    public String deleteUser(@PathVariable("id") Long id){
-        userService.deleteById(id);
+    public String deleteUser(@PathVariable("id") Long id) {
+        userDao.deleteById(id);
         return "redirect:/users";
     }
 
     @GetMapping("/update/{id}")
-    public String updateUserForm(@PathVariable("id") Long id, Model model){
-        Optional<User> user = userService.findById(id);
+    public String updateUserForm(@PathVariable("id") Long id, Model model) {
+        User user = userDao.findById(id);
         model.addAttribute("user", user);
         return "update";
     }
 
     @PostMapping("/update")
-    public String updateUser(@ModelAttribute("user") User user){
-        userService.updateUser(user);
+    public String updateUser(@ModelAttribute("user") User user) {
+        userDao.updateUser(user);
         return "redirect:/users";
     }
 }
