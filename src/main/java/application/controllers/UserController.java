@@ -1,7 +1,7 @@
 package application.controllers;
 
 import application.models.User;
-import application.dao.UserDaoImpl;
+import application.services.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,16 +14,16 @@ import java.util.List;
 @Controller
 public class UserController {
 
-    private final UserDaoImpl userDao;
+    private final UserService userService;
 
-    public UserController(UserDaoImpl userDao) {
-        this.userDao = userDao;
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
 
 
     @GetMapping("/users")
     public String findAll(Model model) {
-        List<User> users = userDao.findAll();
+        List<User> users = userService.findAll();
         model.addAttribute("users", users);
         return "users";
     }
@@ -35,26 +35,26 @@ public class UserController {
 
     @PostMapping("/create")
     public String createUser(@ModelAttribute("user") User user) {
-        userDao.saveUser(user);
+        userService.saveUser(user);
         return "redirect:/users";
     }
 
     @GetMapping("delete/{id}")
     public String deleteUser(@PathVariable("id") Long id) {
-        userDao.deleteById(id);
+        userService.deleteById(id);
         return "redirect:/users";
     }
 
     @GetMapping("/update/{id}")
     public String updateUserForm(@PathVariable("id") Long id, Model model) {
-        User user = userDao.findById(id);
+        User user = userService.findById(id);
         model.addAttribute("user", user);
         return "update";
     }
 
     @PostMapping("/update")
     public String updateUser(@ModelAttribute("user") User user) {
-        userDao.updateUser(user);
+        userService.updateUser(user);
         return "redirect:/users";
     }
 }
